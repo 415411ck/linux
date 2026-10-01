@@ -12,7 +12,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git clang lld make flex bison libncurses-dev device-tree-compiler libssl-dev libelf-dev bc rsync xz-utils
+          sudo apt-get install -y git clang lld llvm make flex bison libncurses-dev device-tree-compiler libssl-dev libelf-dev bc rsync xz-utils
 
       - name: Build Kernel
         run: |
