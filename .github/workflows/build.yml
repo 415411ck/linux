@@ -16,7 +16,12 @@ jobs:
 
       - name: Build Kernel
         run: |
-          cp config_16k .config
+          # 使用默认配置并强制开启 16K 页（适用于 iPhone 8 的 A11 芯片）
+          make defconfig
+          ./scripts/config --enable CONFIG_ARM64_16K_PAGES
+          make olddefconfig
+          
+          # 开始编译
           make -j$(nproc) LLVM=1 ARCH=arm64 Image.gz dtbs
 
       - name: Upload Artifact
