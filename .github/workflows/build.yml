@@ -16,12 +16,17 @@ jobs:
 
       - name: Build Kernel
         run: |
-          # 必须指定 ARCH=arm64，否则生成的是电脑 x86 的配置
           make ARCH=arm64 defconfig
           ./scripts/config --enable CONFIG_ARM64_16K_PAGES
+          # --- 开启 USB 虚拟串口（CDC ACM）的核心配置 ---
+          ./scripts/config --enable CONFIG_USB_GADGET
+          ./scripts/config --enable CONFIG_USB_CONFIGFS
+          ./scripts/config --enable CONFIG_USB_CONFIGFS_ACM
+          # --- 开启串口控制台支持 ---
+          ./scripts/config --enable CONFIG_SERIAL_AMBA_PL011
+          ./scripts/config --enable CONFIG_SERIAL_AMBA_PL011_CONSOLE
           make ARCH=arm64 olddefconfig
-          
-          # 开始编译
+          # --- 开始编译 ---
           make -j$(nproc) LLVM=1 ARCH=arm64 Image.gz dtbs
 
       - name: Upload Artifact
