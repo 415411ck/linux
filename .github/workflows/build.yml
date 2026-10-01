@@ -1,0 +1,28 @@
+name: Build Hoolock Kernel
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git clang lld make flex bison libncurses-dev device-tree-compiler
+
+      - name: Build Kernel
+        run: |
+          cp config_16k .config
+          make -j$(nproc) LLVM=1 ARCH=arm64 Image.gz dtbs
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoolock-kernel
+          path: |
+            arch/arm64/boot/Image.gz
+            arch/arm64/boot/dts/apple/t8015-d20.dtb
