@@ -12,14 +12,14 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git clang lld make flex bison libncurses-dev device-tree-compiler
+          sudo apt-get install -y git clang lld make flex bison libncurses-dev device-tree-compiler libssl-dev libelf-dev bc rsync xz-utils
 
       - name: Build Kernel
         run: |
-          # 使用默认配置并强制开启 16K 页（适用于 iPhone 8 的 A11 芯片）
-          make defconfig
+          # 必须指定 ARCH=arm64，否则生成的是电脑 x86 的配置
+          make ARCH=arm64 defconfig
           ./scripts/config --enable CONFIG_ARM64_16K_PAGES
-          make olddefconfig
+          make ARCH=arm64 olddefconfig
           
           # 开始编译
           make -j$(nproc) LLVM=1 ARCH=arm64 Image.gz dtbs
